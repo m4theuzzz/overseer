@@ -21,7 +21,7 @@ async function connectDatabase() {
 app.use(express.static('public'));
 
 app.get('/', (req: Request, res: Response) => {
-    res.sendFile(join(__dirname, 'src/public/index.html'));
+    res.sendFile(join(__dirname, 'public/index.html'));
 });
 
 app.listen(process.env.APP_PORT, async () => {
