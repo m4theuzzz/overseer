@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "outDir": "build",
+        "allowJs": true
+    },
+    "include": [
+        "src/**/*",
+        "main.ts",
+        "package.json",
+        ".env"
+    ],
+    "exclude": [
+        "node_modules",
+        "artifacts",
+        "**/*.spec.ts",
+        ".gitignore",
+        ".env.sample",
+        "README.md",
+        "package-lock.json"
+    ]
+}
