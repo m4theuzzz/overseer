@@ -12,19 +12,23 @@ route.post('/login', urlencoded({ extended: false }), (req: any, res: Response, 
         }
 
         if (!req.body.email || !req.body.password) {
-            return res.status(400).send("Requisição não possui dados necessários");
+            return res.status(400).send("Requisição não possui os dados necessários");
         }
 
-        req.session.user = await controller.authenticate(req.body.email, req.body.password);
+        try {
+            req.session.user = await controller.authenticate(req.body.email, req.body.password);
 
-        req.session.save(function (err: any) {
-            if (err) {
-                console.log(err);
-                res.status(400).send("Não foi possível iniciar a sessão");
-            } else {
-                res.status(200).send("Login realizado com sucesso.");
-            }
-        })
+            req.session.save(function (err: any) {
+                if (err) {
+                    console.log(err);
+                    res.status(400).send("Não foi possível iniciar a sessão");
+                } else {
+                    res.status(200).send("Login realizado com sucesso.");
+                }
+            })
+        } catch (error) {
+            res.status(error.status).send(error.message);
+        }
     });
 });
 

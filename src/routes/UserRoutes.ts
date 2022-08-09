@@ -8,14 +8,24 @@ route.use((req: any, res: Response, next: NextFunction) => {
     if (req.session.user) {
         next();
     } else {
-        res.status(440).send("Sessão Expirada");
+        res.status(403).send("Sua sessão expirou.");
     }
 });
 
-route.get('/', async (req: Request, res: Response) => {
+// DEV ONLY: DELETE ON PRODUCTION
+route.get('/all', async (req: Request, res: Response) => {
     try {
         const users = await controller.getUsers();
         res.status(200).send(users);
+    } catch (error) {
+        res.status(error.status).send(error.message);
+    }
+});
+
+route.get('/', async (req: any, res: Response) => {
+    try {
+        const user = await controller.getUser(req.session.user);
+        res.status(200).send(user);
     } catch (error) {
         res.status(error.status).send(error.message);
     }

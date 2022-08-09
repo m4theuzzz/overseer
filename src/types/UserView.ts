@@ -3,7 +3,6 @@ export interface UserView {
     name: string;
     password: string;
     email: string;
-    sessionId?: string;
     createdAt: Date;
     updatedAt: Date;
 }

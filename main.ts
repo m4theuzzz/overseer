@@ -33,7 +33,7 @@ const authRoutes = require('./src/routes/AuthRoutes');
 app.use(express.json());
 app.use(express.static('public'));
 
-app.use('/users', userRoutes);
+app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 
 app.get('/', (req: express.Request, res: express.Response) => {

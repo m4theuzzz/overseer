@@ -1,4 +1,3 @@
-import { Application } from 'express';
 import { Database } from '../modules/Database';
 import { UserView } from '../types/UserView';
 import { Security } from '../modules/Security';
