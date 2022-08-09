@@ -1,13 +1,15 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { UserController } from '../controllers/UserController';
-import { Security } from '../modules/Security';
 
 const route = Router();
 const controller = new UserController();
 
-route.use((req: Request, res: Response, next: NextFunction) => {
-    console.log(req.sessionID);
-    next();
+route.use((req: any, res: Response, next: NextFunction) => {
+    if (req.session.user) {
+        next();
+    } else {
+        res.status(440).send("Sessão Expirada");
+    }
 });
 
 route.get('/', async (req: Request, res: Response) => {

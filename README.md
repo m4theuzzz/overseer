@@ -19,10 +19,26 @@ A distribuição estará na pasta `build`;
 ### Users
 
 - GET /users
+> Retorna todos os usuários do sistema;
+> Precisa de Sessão Iniciada
 
 - POST /users
-{
+body: {
     name: "string",
     password: "string",
     email: "string"
 }
+> Cria um novo usuário
+> Precisa de Sessão Iniciada
+
+### Auth
+
+- POST /auth/login
+body: {
+    email: "string",
+    password: "string"
+}
+> Cria uma sessão com um usuário existente
+
+- POST /auth/logout
+> Finaliza a sessão de um usuário
