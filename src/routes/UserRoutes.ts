@@ -45,4 +45,30 @@ route.post('/', async (req: Request, res: Response) => {
     }
 });
 
+route.put('/', async (req: any, res: Response) => {
+    try {
+        if (req.body.userId == req.session.user) {
+            const user = await controller.updateUser(req.body);
+            res.status(200).send(user);
+        } else {
+            res.status(403).send("Você não tem permissão para alterar este usuário.");
+        }
+    } catch (error) {
+        res.status(error.status).send(error.message);
+    }
+});
+
+route.delete('/', async (req: any, res: Response) => {
+    try {
+        if (req.body.userId == req.session.user) {
+            const user = await controller.deleteUser(req.body.user);
+            res.status(200).send("Usuário deletado com sucesso.");
+        } else {
+            res.status(403).send("Você não tem permissão para alterar este usuário.");
+        }
+    } catch (error) {
+        res.status(error.status).send(error.message);
+    }
+});
+
 module.exports = route;

@@ -18,11 +18,11 @@ A distribuição estará na pasta `build`;
 
 ### Users
 
-- GET /users
-> Retorna todos os usuários do sistema;
+- GET /user
+> Retorna o usuário logado no sistema
 > Precisa de Sessão Iniciada
 
-- POST /users
+- POST /user
 body: {
     name: "string",
     password: "string",
@@ -30,6 +30,20 @@ body: {
 }
 > Cria um novo usuário
 > Precisa de Sessão Iniciada
+
+- PUT /user
+body: {
+    userId: "string",
+    name: "string",
+    email: "string"
+}
+> Atualiza o usuário logado no sistema
+> Precisa de sessão iniciada
+
+- DELETE /user
+body: {
+    userId: "string"
+}
 
 ### Auth
 
