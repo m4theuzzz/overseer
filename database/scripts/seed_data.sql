@@ -1,0 +1,2 @@
+INSERT INTO Users(name, password, email) VALUES('Jonny', aes_encrypt('123456789', 'encryption_pass'), 'email@test.com');
+INSERT INTO Users(name, password, email) VALUES('English', aes_encrypt('123456789', 'encryption_pass'), 'email2@test.com');

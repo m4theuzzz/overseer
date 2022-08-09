@@ -13,3 +13,16 @@
 - Execute o comando `npm run build`;
 
 A distribuição estará na pasta `build`;
+
+## Rotas da API
+
+### Users
+
+- GET /users
+
+- POST /users
+{
+    name: "string",
+    password: "string",
+    email: "string"
+}
