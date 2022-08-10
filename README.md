@@ -74,3 +74,10 @@ body: {
     password: "string"
 }
 > Retorna o session-token (necessário para as outras requests) com validade de 2 horas
+
+- POST /auth/refresh
+
+headers: {
+    session-token: "string"
+}
+> Retorna um novo session-token com expiração renovada para mais 2 horas, caso o token passado ainda não esteja vencido

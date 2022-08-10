@@ -40,7 +40,7 @@ export class UserController {
             const query = "SELECT * FROM Users";
 
             const user = (await Database.execute(query, { id: id }) as any[])[0];
-            console.log(user);
+
             return {
                 id: user.id,
                 name: user.name,
