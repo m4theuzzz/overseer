@@ -56,6 +56,7 @@ headers: {
 body: {
     userId: "string"
 }
+> Deleta o usuário logado
 
 ### Auth
 
@@ -65,4 +66,4 @@ body: {
     email: "string",
     password: "string"
 }
-> Cria uma sessão com um usuário existente
+> Retorna o session-token (necessário para as outras requests) com validade de 2 horas
