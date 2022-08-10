@@ -1,12 +1,21 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { UserController } from '../controllers/UserController';
+import { AuthController } from '../controllers/AuthController';
 
 const route = Router();
 const controller = new UserController();
+const auth = new AuthController();
 
-route.use((req: any, res: Response, next: NextFunction) => {
-    if (req.session.user) {
-        next();
+route.use(async (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers["session-token"]) {
+        try {
+            const sessionToken = req.headers['session-token'];
+            await auth.authenticate(sessionToken);
+            next();
+        } catch (error) {
+            console.log(error);
+            res.status(403).send("Token Inválido");
+        }
     } else {
         res.status(403).send("Sua sessão expirou.");
     }

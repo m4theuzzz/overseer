@@ -5,7 +5,7 @@ import { RequestException } from '../types/RequestExceptionView';
 
 
 export class AuthController {
-    authenticate = async (email: string, password: string): Promise<string> => {
+    authorize = async (email: string, password: string) => {
         const query = "SELECT * FROM Users";
         const params = {
             email: email
@@ -18,10 +18,15 @@ export class AuthController {
             throw { status: 404, message: "Email não cadastrado." } as RequestException;
         }
 
-        if (Security.decrypt(user.password) == password) {
-            return user.id;
+        if (Security.AESDecrypt(user.password) == password) {
+            return { "session-token": Security.JWTEncrypt(user) };
         } else {
             throw { status: 400, message: "Senha incorreta." } as RequestException;
         }
+    }
+
+    authenticate = async (sessionToken: string | string[]) => {
+        const userData: UserView = Security.JWTDecrypt(sessionToken as string);
+        return await this.authorize(userData.email, Security.AESDecrypt(userData.password));
     }
 }

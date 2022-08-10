@@ -6,7 +6,7 @@ import { RequestException } from '../types/RequestExceptionView';
 export class UserController {
     createUser = async (name: string, password: string, email: string) => {
         try {
-            const query = `INSERT INTO Users(name, password, email) VALUES ("${escape(name)}", "${Security.encrypt(password)}", "${escape(email)}")`;
+            const query = `INSERT INTO Users(name, password, email) VALUES ("${escape(name)}", "${Security.AESEncrypt(password)}", "${escape(email)}")`;
 
             return await Database.execute(query);
         } catch (e) {

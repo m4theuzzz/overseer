@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import * as crypto from 'crypto';
+import { UserView } from '../types/UserView';
+import { sign, verify } from 'jsonwebtoken';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
@@ -15,7 +17,7 @@ export class Security {
         return crypto.pbkdf2Sync(this.secret, salt, 100000, 32, 'sha512');
     }
 
-    static encrypt(plainText: string) {
+    static AESEncrypt(plainText: string) {
         const iv = crypto.randomBytes(IV_LENGTH);
         const salt = crypto.randomBytes(SALT_LENGTH);
 
@@ -32,7 +34,7 @@ export class Security {
         return Buffer.concat([salt, iv, tag, encrypted]).toString('base64');
     }
 
-    static decrypt(cipherText: string) {
+    static AESDecrypt(cipherText: string) {
         const stringValue = Buffer.from(String(cipherText), 'base64');
 
         const salt = stringValue.slice(0, SALT_LENGTH);
@@ -47,5 +49,21 @@ export class Security {
         decipher.setAuthTag(tag);
 
         return decipher.update(encrypted) + decipher.final('utf8');
+    }
+
+    static JWTEncrypt(userData: UserView) {
+        return sign(
+            {
+                id: userData.id,
+                email: userData.email,
+                password: userData.password
+            },
+            process.env.KEY
+        );
+    }
+
+    static JWTDecrypt(sessionToken: string) {
+        const userData = verify(sessionToken, process.env.KEY) as any;
+        return userData;
     }
 }

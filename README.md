@@ -23,6 +23,7 @@ A distribuição estará na pasta `build`;
 > Precisa de Sessão Iniciada
 
 - POST /user
+
 body: {
     name: "string",
     password: "string",
@@ -32,6 +33,7 @@ body: {
 > Precisa de Sessão Iniciada
 
 - PUT /user
+
 body: {
     userId: "string",
     name: "string",
@@ -41,6 +43,7 @@ body: {
 > Precisa de sessão iniciada
 
 - DELETE /user
+
 body: {
     userId: "string"
 }
@@ -48,6 +51,7 @@ body: {
 ### Auth
 
 - POST /auth/login
+
 body: {
     email: "string",
     password: "string"
