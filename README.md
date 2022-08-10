@@ -19,8 +19,11 @@ A distribuição estará na pasta `build`;
 ### Users
 
 - GET /user
+
+headers: {
+    session-token: "string"
+}
 > Retorna o usuário logado no sistema
-> Precisa de Sessão Iniciada
 
 - POST /user
 
@@ -29,8 +32,11 @@ body: {
     password: "string",
     email: "string"
 }
+
+headers: {
+    session-token: "string"
+}
 > Cria um novo usuário
-> Precisa de Sessão Iniciada
 
 - PUT /user
 
@@ -39,8 +45,11 @@ body: {
     name: "string",
     email: "string"
 }
+
+headers: {
+    session-token: "string"
+}
 > Atualiza o usuário logado no sistema
-> Precisa de sessão iniciada
 
 - DELETE /user
 
@@ -57,6 +66,3 @@ body: {
     password: "string"
 }
 > Cria uma sessão com um usuário existente
-
-- POST /auth/logout
-> Finaliza a sessão de um usuário
