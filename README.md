@@ -23,6 +23,14 @@ A distribuição estará na pasta `build`;
 headers: {
     session-token: "string"
 }
+
+response: {
+    "id": "8f5a1b92-18b6-11ed-8f30-070401f7d74d",
+    "name": "Jonny",
+    "email": "email@test.com",
+    "createdAt": "2022-08-10T14:13:08.000Z",
+    "updatedAt": "2022-08-10T14:13:08.000Z"
+}
 > Retorna o usuário logado no sistema
 
 - POST /user
