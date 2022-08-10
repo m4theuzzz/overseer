@@ -52,11 +52,15 @@ export class Security {
     }
 
     static JWTEncrypt(userData: UserView) {
+        const expireDate = new Date();
+        expireDate.setHours(expireDate.getHours() + 2);
+
         return sign(
             {
                 id: userData.id,
                 email: userData.email,
-                password: userData.password
+                password: userData.password,
+                expiresIn: expireDate
             },
             process.env.KEY
         );

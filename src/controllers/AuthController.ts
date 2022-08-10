@@ -26,7 +26,13 @@ export class AuthController {
     }
 
     authenticate = async (sessionToken: string | string[]) => {
-        const userData: UserView = Security.JWTDecrypt(sessionToken as string);
+        const userData = Security.JWTDecrypt(sessionToken as string);
+
+        const now = new Date();
+        if (now >= userData.expiresIn) {
+            throw { status: 403, message: "Token expirado." } as RequestException;
+        }
+
         return await this.authorize(userData.email, Security.AESDecrypt(userData.password));
     }
 }
