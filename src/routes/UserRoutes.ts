@@ -35,7 +35,7 @@ route.get('/all', async (req: Request, res: Response) => {
 
 route.get('/', async (req: any, res: Response) => {
     try {
-        const user = await controller.getUser(req.session.user);
+        const user = await controller.getUser(req.sessionID);
         res.status(200).send(user);
     } catch (error) {
         res.status(error.status).send(error.message);

@@ -60,7 +60,7 @@ export class Security {
                 id: userData.id,
                 email: userData.email,
                 password: userData.password,
-                expiresIn: expireDate
+                expireAt: expireDate
             },
             process.env.KEY
         );

@@ -40,16 +40,16 @@ export class AuthController {
 
     private tokenIsValid = (userData: any) => {
         if (
-            !userData.expiresIn ||
+            !userData.expireAt ||
             !userData.email ||
             !userData.password ||
             !userData.id
         ) {
-            throw { status: 403, message: "Token expirado." } as RequestException;
+            throw { status: 403, message: "Token inválido." } as RequestException;
         }
 
         const now = new Date();
-        if (now > userData.expiresIn) {
+        if (now > userData.expireAt) {
             throw { status: 403, message: "Token expirado." } as RequestException;
         }
 

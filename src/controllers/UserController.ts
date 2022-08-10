@@ -39,7 +39,15 @@ export class UserController {
         try {
             const query = "SELECT * FROM Users";
 
-            return (await Database.execute(query, { id: id }) as UserView[])[0];
+            const user = (await Database.execute(query, { id: id }) as any[])[0];
+            console.log(user);
+            return {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                createdAt: user.created_at,
+                updatedAt: user.updated_at
+            } as UserView;
         } catch (e) {
             const error: RequestException = {
                 status: 500,
@@ -52,7 +60,7 @@ export class UserController {
 
     updateUser = async (user: UserView) => {
         try {
-            const query = `UPDATE Users SET name = ${user.name}, email = ${user.email}`;
+            const query = `UPDATE Users SET name = "${user.name}", email = "${user.email}"`;
 
             return await Database.execute(query, { id: user.id });
         } catch (e) {
@@ -67,9 +75,9 @@ export class UserController {
 
     deleteUser = async (id: string) => {
         try {
-            const query = `DELETE FROM Users`;
+            const query = `DELETE FROM Users WHERE id = "${id}"`;
 
-            return await Database.execute(query, { id: id });
+            return await Database.execute(query);
         } catch (e) {
             const error: RequestException = {
                 status: 500,
