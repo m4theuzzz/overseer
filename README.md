@@ -41,7 +41,6 @@ headers: {
 - PUT /user
 
 body: {
-    userId: "string",
     name: "string",
     email: "string"
 }
@@ -53,8 +52,8 @@ headers: {
 
 - DELETE /user
 
-body: {
-    userId: "string"
+headers: {
+    session-token: "string"
 }
 > Deleta o usuário logado
 

@@ -26,13 +26,33 @@ export class AuthController {
     }
 
     authenticate = async (sessionToken: string | string[]) => {
-        const userData = Security.JWTDecrypt(sessionToken as string);
+        try {
+            const userData = Security.JWTDecrypt(sessionToken as string);
 
-        const now = new Date();
-        if (now >= userData.expiresIn) {
+            if (this.tokenIsValid(userData)) {
+                await this.authorize(userData.email, Security.AESDecrypt(userData.password));
+                return userData.id
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    private tokenIsValid = (userData: any) => {
+        if (
+            !userData.expiresIn ||
+            !userData.email ||
+            !userData.password ||
+            !userData.id
+        ) {
             throw { status: 403, message: "Token expirado." } as RequestException;
         }
 
-        return await this.authorize(userData.email, Security.AESDecrypt(userData.password));
+        const now = new Date();
+        if (now > userData.expiresIn) {
+            throw { status: 403, message: "Token expirado." } as RequestException;
+        }
+
+        return true;
     }
 }
