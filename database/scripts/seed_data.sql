@@ -17,14 +17,14 @@ INSERT INTO Clients(
     phone,
     address
 ) VALUES (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
+    '{user_id}',
     'Cliente teste 1',
     '00.000.000/0001-00',
     'clinte@teste.com',
     '+55(31)98765-4321',
     'Rua Sinhá, 555'
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
+    '{user_id}',
     'second test client',
     '00.000.000/0002-00',
     'test@client.com',
@@ -41,9 +41,12 @@ INSERT INTO Services(
     mesure_unit,
     daily_cost,
     hour_cost,
-    sq_meter_cost
+    sq_meter_cost,
+    error_margin,
+    coefficient,
+    multiplier
 ) VALUES (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
+    '{user_id}',
     'Assentamento de cerâmica - Pedreiro',
     'teste servico 1.0',
     'Pedreiro',
@@ -51,9 +54,12 @@ INSERT INTO Services(
     'm²/dia',
     150.00,
     21.43,
-    17.86
+    17.86,
+    0.05,
+    0.0069,
+    'unity'
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
+    '{user_id}',
     'Assentamento de cerâmica - Servente',
 	'teste servico 1.1',
     'Servente',
@@ -61,21 +67,27 @@ INSERT INTO Services(
     'm²/dia',
     70.00,
     10.00,
-    8.34
+    8.34,
+    0.05,
+    0.0069,
+    'daily'
 );
 
 INSERT INTO Constructions(
     user_id,
+    client_id,
     name,
     status,
     address
 ) VALUES (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
+    '{user_id}',
+    '{client_id}',
     'Obra 1',
     'budget',
     'Rua Sôór e Sange, 666'
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
+    '{user_id}',
+    '{client_id}',
     'Obra 2',
     'constructing',
     'Rua Dô e Safrimentu, 333'
@@ -89,23 +101,23 @@ INSERT INTO Budgets(
     sector,
     deadline
 ) VALUES (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
-    'b2203778-1cdb-11ed-8ef8-01ea9425fc81',
-    'b21fc022-1cdb-11ed-8ef8-01ea9425fc81',
+    '{user_id}',
+    '{construction_id}',
+    '{service_id}',
     4,
     'Primeiro Andar',
     '2023-01-12 10:00:00'
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
-    'b2203778-1cdb-11ed-8ef8-01ea9425fc81',
-    'b21fc59a-1cdb-11ed-8ef8-01ea9425fc81',
+    '{user_id}',
+    '{construction_id}',
+    '{service_id}',
     2,
     'Segundo Andar',
     '2023-01-21 10:00:00'
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
-    'b22040a6-1cdb-11ed-8ef8-01ea9425fc81',
-    'b21fc022-1cdb-11ed-8ef8-01ea9425fc81',
+    '{user_id}',
+    '{construction_id}',
+    '{service_id}',
     2,
     'Fundação',
     '2022-11-10 10:00:00'
@@ -115,24 +127,36 @@ INSERT INTO Transactions(
     user_id,
     budget_id,
     name,
+    description,
     value,
+    type,
+    scheduling,
     file
 ) VALUES (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
-    'e9468e80-1cdd-11ed-8ef8-01ea9425fc81',
+    '{user_id}',
+    '{budget_id}',
     'Pagamento 1',
+    'Descrição 1',
     -1097.53,
+    'salary',
+    '2022-08-16 00:00:00',
     null
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
-    'e946a23a-1cdd-11ed-8ef8-01ea9425fc81',
+    '{user_id}',
+    '{budget_id}',
     'Pagamento 2',
+    'Descrição 2',
     127.57,
+    'revenue',
+    '2022-10-15 06:00:00',
     null
 ), (
-    '8f5a1b92-18b6-11ed-8f30-070401f7d74d',
-    'e946a47e-1cdd-11ed-8ef8-01ea9425fc81',
+    '{user_id}',
+    '{budget_id}',
     'Pagamento 3',
+    'Descrição 3',
     -562.10,
+    'transport',
+    '2022-08-16 03:00:00',
     null
 );

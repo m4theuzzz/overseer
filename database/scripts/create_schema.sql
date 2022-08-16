@@ -36,6 +36,9 @@ CREATE TABLE IF NOT EXISTS Services (
     daily_cost float default null, -- avaliar necessidade: pode ser calculado a partir do sq_meter_cost * productivity --
     hour_cost float default null, -- avaliar necessidade: pode ser calculado a partir do daily_cost --
     sq_meter_cost float not null,
+    error_margin float default 0,
+    coefficient float not null,
+    multiplier varchar(32) not null, -- forma como o serviço será multiplicado --
 	created_at datetime default current_timestamp,
     updated_at datetime default current_timestamp on update current_timestamp,
     PRIMARY KEY(id),
@@ -45,12 +48,14 @@ CREATE TABLE IF NOT EXISTS Services (
 CREATE TABLE IF NOT EXISTS Constructions (
 	id varchar(64) default (uuid()) unique not null,
     user_id varchar(64) not null,
+    client_id varchar(64) not null,
     name varchar(64) not null unique,
     status varchar(16) not null default "budget", -- etapas: "budget", "construction", "finished"
     address varchar(128) not null,
     created_at datetime default current_timestamp,
     updated_at datetime default current_timestamp on update current_timestamp,
     PRIMARY KEY(id),
+    FOREIGN KEY(client_id) REFERENCES Clients(id),
     FOREIGN KEY(user_id) REFERENCES Users(id) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
@@ -61,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Budgets (
     service_id varchar(64) not null,
     quantity integer not null default 1,
     sector varchar(64) default null,
-    deadline Datetime default null,
+    deadline datetime default null,
     created_at datetime default current_timestamp,
     updated_at datetime default current_timestamp on update current_timestamp,
     PRIMARY KEY(id),
@@ -75,8 +80,11 @@ CREATE TABLE IF NOT EXISTS Transactions (
 	user_id varchar(64) not null,
     budget_id varchar(64) default null,
     name varchar(32) not null,
-    value float default 0.00,
-    file text default null,
+    description text default null,
+    value float not null default 0.00,
+    type varchar(32) default null, -- tipo de despesa: "recebimento", "insumo", "salário", etc. --
+    scheduling datetime default current_timestamp,
+    file text default null, -- cupom fiscal --
     created_at datetime default current_timestamp,
     updated_at datetime default current_timestamp on update current_timestamp,
     PRIMARY KEY(id),

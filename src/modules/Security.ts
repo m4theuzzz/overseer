@@ -11,10 +11,8 @@ const TAG_POSITION = SALT_LENGTH + IV_LENGTH;
 const ENCRYPTED_POSITION = TAG_POSITION + TAG_LENGTH;
 
 export class Security {
-    static secret: string = process.env.KEY;
-
     static getKey(salt: Buffer) {
-        return crypto.pbkdf2Sync(this.secret, salt, 100000, 32, 'sha512');
+        return crypto.pbkdf2Sync(process.env.KEY, salt, 100000, 32, 'sha512');
     }
 
     static AESEncrypt(plainText: string) {

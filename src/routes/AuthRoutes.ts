@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router, urlencoded } from 'express';
+import { Request, Response, Router, urlencoded } from 'express';
 import { AuthController } from '../controllers/AuthController';
 import { Security } from '../modules/Security';
 
