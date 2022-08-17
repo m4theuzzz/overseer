@@ -27,14 +27,16 @@ if (process.env.ENV === 'production') {
 
 app.use(session(sess));
 
-const userRoutes = require('./src/routes/UserRoutes');
 const authRoutes = require('./src/routes/AuthRoutes');
+const usersRoutes = require('./src/routes/UsersRoutes');
+const clientsRoutes = require('./src/routes/ClientsRoutes');
 
 app.use(express.json());
 app.use(express.static('public'));
 
-app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
+app.use('/users', usersRoutes);
+app.use('/clients', clientsRoutes);
 
 app.get('/', (req: express.Request, res: express.Response) => {
     res.sendFile(join(__dirname, 'public/index.html'));

@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { UserController } from '../controllers/UserController';
+import { UsersController } from '../controllers/UsersController';
 import { AuthController } from '../controllers/AuthController';
-import { UserView } from '../types/UserView';
+import { UsersView } from '../types/UsersView';
 
 const route = Router();
-const controller = new UserController();
+const controller = new UsersController();
 const auth = new AuthController();
 
 route.use(async (req: Request, res: Response, next: NextFunction) => {
@@ -64,7 +64,7 @@ route.put('/', async (req: any, res: Response) => {
             id: req.sessionID,
             name: req.body.name,
             email: req.body.email
-        } as UserView;
+        } as UsersView;
 
         await controller.updateUser(userObject);
         res.status(200).send("Usuário atualizado com sucesso.");

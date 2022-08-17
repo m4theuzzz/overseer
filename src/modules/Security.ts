@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import * as crypto from 'crypto';
-import { UserView } from '../types/UserView';
+import { UsersView } from '../types/UsersView';
 import { sign, verify } from 'jsonwebtoken';
 
 const ALGORITHM = 'aes-256-gcm';
@@ -49,7 +49,7 @@ export class Security {
         return decipher.update(encrypted) + decipher.final('utf8');
     }
 
-    static JWTEncrypt(userData: UserView) {
+    static JWTEncrypt(userData: UsersView) {
         const expireDate = new Date();
         expireDate.setHours(expireDate.getHours() + 2);
 

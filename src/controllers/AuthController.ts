@@ -1,5 +1,5 @@
 import { Database } from '../modules/Database';
-import { UserView } from '../types/UserView';
+import { UsersView } from '../types/UsersView';
 import { Security } from '../modules/Security';
 import { RequestException } from '../types/RequestExceptionView';
 
@@ -11,7 +11,7 @@ export class AuthController {
             email: email
         };
 
-        const users = (await Database.execute(query, params)) as UserView[];
+        const users = (await Database.execute(query, params)) as UsersView[];
         const user = users[0];
 
         if (!user) {

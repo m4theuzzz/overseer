@@ -1,41 +1,37 @@
 import { Security } from '../modules/Security';
-import { UserView } from '../types/UserView';
+import { UsersView } from '../types/UsersView';
 import { Database } from '../modules/Database';
 import { RequestException } from '../types/RequestExceptionView';
 
-export class UserController {
+export class UsersController {
     createUser = async (name: string, password: string, email: string) => {
         try {
             const query = `INSERT INTO Users(name, password, email) VALUES ("${escape(name)}", "${Security.AESEncrypt(password)}", "${escape(email)}")`;
 
             return await Database.execute(query);
         } catch (e) {
-            const error: RequestException = {
+            throw {
                 status: 500,
                 message: e.message
-            }
-
-            throw error;
+            } as RequestException;
         }
     }
 
     // DEV ONLY: DELETE ON PRODUCTION
-    getUsers = async (): Promise<UserView[]> => {
+    getUsers = async (): Promise<UsersView[]> => {
         try {
             const query = "SELECT * FROM Users";
 
-            return await Database.execute(query) as UserView[];
+            return await Database.execute(query) as UsersView[];
         } catch (e) {
-            const error: RequestException = {
+            throw {
                 status: 500,
                 message: e.message
-            }
-
-            throw error;
+            } as RequestException;
         }
     }
 
-    getUser = async (id: string): Promise<UserView> => {
+    getUser = async (id: string): Promise<UsersView> => {
         try {
             const query = "SELECT * FROM Users";
 
@@ -47,29 +43,25 @@ export class UserController {
                 email: user.email,
                 createdAt: user.created_at,
                 updatedAt: user.updated_at
-            } as UserView;
+            } as UsersView;
         } catch (e) {
-            const error: RequestException = {
+            throw {
                 status: 500,
                 message: e.message
-            }
-
-            throw error;
+            } as RequestException;
         }
     }
 
-    updateUser = async (user: UserView) => {
+    updateUser = async (user: UsersView) => {
         try {
             const query = `UPDATE Users SET name = "${user.name}", email = "${user.email}"`;
 
             return await Database.execute(query, { id: user.id });
         } catch (e) {
-            const error: RequestException = {
+            throw {
                 status: 500,
                 message: e.message
-            }
-
-            throw error;
+            } as RequestException;
         }
     }
 
@@ -79,12 +71,10 @@ export class UserController {
 
             return await Database.execute(query);
         } catch (e) {
-            const error: RequestException = {
+            throw {
                 status: 500,
                 message: e.message
-            }
-
-            throw error;
+            } as RequestException;
         }
     }
 }
