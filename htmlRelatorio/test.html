@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento</title>
+</head>
+
+<style>
+    body {
+        margin-left: 3rem;
+        font-family: Roboto, sans-serif;
+        background-color: white;
+
+        @media print: {
+            display: block !important;
+        }
+
+        ;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 21px;
+    }
+
+    h3 {
+        font-size: 18px;
+    }
+
+    hr {
+        border: 1px solid #A9ABAC;
+        width: 95%;
+        margin-right: 5%;
+    }
+
+    p,
+    span {
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 95%;
+    }
+
+    td,
+    th {
+        border: 1px solid #eeeeee;
+        text-align: center;
+        padding: 8px;
+    }
+
+    th {
+        font-size: 14px;
+    }
+
+    td {
+        font-size: 13px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #eeeeee;
+    }
+
+    #header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    #header img {
+        width: auto;
+        height: 100px;
+    }
+
+    #header p {
+        margin-right: 5%;
+    }
+
+    #header h1 {
+        margin-right: 3rem;
+    }
+
+    #box {
+        width: 95%;
+        min-height: 100px;
+        border: 1px solid black;
+    }
+
+    #client-info {}
+
+    .sector-table {}
+
+    .divisor {
+        width: 100%;
+        display: flex;
+    }
+</style>
+
+<body>
+
+    <div id="header">
+        <img src="logo.png" alt="logo">
+
+        <p>Data: 17/11/2022</p>
+    </div>
+    <br />
+
+
+    <div id="client-info">
+        <h2>Informações do cliente</h2>
+        <hr>
+        <div style="display: flex; justify-content: space-around;"><span style="width: 50%;">Matheus</span> <span
+                style="width: 50%;">123.123.123-12</span></div>
+        <br />
+        <div style="display: flex; justify-content: space-around;"><span style="width: 50%;">31298765432</span> <span
+                style="width: 50%;">matvsan@gmail.com</span></div>
+    </div>
+    <br />
+
+    <div id="budget">
+        <h2>Orçamento:</h2>
+        <hr />
+        <h3 id="sector-name">Setor: Primeiro Andar</h3>
+        <table className="sector-table">
+            <tr>
+                <th>Serviço</th>
+                <th>Quantidade</th>
+                <th>Unidade</th>
+                <th>Preço Unitário</th>
+                <th>Preço Orçado</th>
+            </tr>
+            <tr>
+                <td>Teste 1</td>
+                <td>10</td>
+                <td>m²</td>
+                <td>R$ 50</td>
+                <td>R$ 575.00</td>
+            </tr>
+            <tr>
+                <td>Assentamento de cerâmica - Pedreiro</td>
+                <td>1</td>
+                <td>m²</td>
+                <td>R$ 150</td>
+                <td>R$ 157.50</td>
+            </tr>
+            <tr>
+                <td>Teste 2</td>
+                <td>5</td>
+                <td>m³</td>
+                <td>R$ 79.99</td>
+                <td>R$ 439.94</td>
+            </tr>
+        </table>
+        <p id="budget-price">Valor total: R$ 1172.44</p><br />
+        <h3 id="sector-name">Setor: Segundo Andar</h3>
+        <table className="sector-table">
+            <tr>
+                <th>Serviço</th>
+                <th>Quantidade</th>
+                <th>Unidade</th>
+                <th>Preço Unitário</th>
+                <th>Preço Orçado</th>
+            </tr>
+            <tr>
+                <td>Assentamento de cerâmica - Servente</td>
+                <td>3</td>
+                <td>m²</td>
+                <td>R$ 70</td>
+                <td>R$ 220.50</td>
+            </tr>
+            <tr>
+                <td>Teste 4</td>
+                <td>2</td>
+                <td>unidade(s)</td>
+                <td>R$ 35.49</td>
+                <td>R$ 85.18</td>
+            </tr>
+        </table>
+        <p id="budget-price">Valor total: R$ 305.68</p><br />
+    </div>
+    <div>
+        <h3>Valor Total Orçado: R$ 1729.40</h3>
+    </div>
+    <br />
+    <div>
+
+        <h2>Observações:</h2>
+        <div id="box">
+            <p></p>
+        </div>
+    </div>
+</body>
+
+</html>

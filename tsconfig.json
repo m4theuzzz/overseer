@@ -16,11 +16,9 @@
     ],
     "exclude": [
         "node_modules",
-        "artifacts",
         "**/*.spec.ts",
         ".gitignore",
         ".env.sample",
         "README.md",
-        "package-lock.json"
     ]
 }

@@ -1,14 +1,32 @@
 import { Security } from '../modules/Security';
-import { UsersView } from '../types/UsersView';
-import { Database } from '../modules/Database';
+import { processUser, UsersRaw, UsersView } from '../types/UsersView';
+import { execute } from '../modules/Database';
 import { RequestException } from '../types/RequestExceptionView';
+import { escape } from '../modules/Utils';
 
 export class UsersController {
-    createUser = async (name: string, password: string, email: string) => {
+    createUser = async (companyId: number, info: UsersView) => {
         try {
-            const query = `INSERT INTO Users(name, password, email) VALUES ("${escape(name)}", "${Security.AESEncrypt(password)}", "${escape(email)}")`;
+            if (!info.password) {
+                throw {
+                    status: 400,
+                    message: "É necessário a senha para cadastro."
+                } as RequestException;
+            }
 
-            return await Database.execute(query);
+            const query = `
+                INSERT INTO Users(company_id, name, password, email, phone, level)
+                VALUES (
+                    "${companyId}",
+                    "${escape(info.name)}",
+                    "${Security.AESEncrypt(info.password)}",
+                    "${escape(info.email)}",
+                    ${info.phone ? '"' + escape(info.phone) + '"' : null},
+                    "${info.level ? info.level : 7}"
+                    )
+            `;
+
+            return await execute(query);
         } catch (e) {
             throw {
                 status: 500,
@@ -17,12 +35,13 @@ export class UsersController {
         }
     }
 
-    // DEV ONLY: DELETE ON PRODUCTION
-    getUsers = async (): Promise<UsersView[]> => {
+    // ADM ONLY
+    getUsers = async (companyId: number): Promise<UsersView[]> => {
         try {
-            const query = "SELECT * FROM Users";
+            const query = `SELECT * FROM Users WHERE company_id="${companyId}"`;
 
-            return await Database.execute(query) as UsersView[];
+            const users = await execute(query) as UsersRaw[];
+            return this.filterUserResponseObject(users.map(user => processUser(user)));
         } catch (e) {
             throw {
                 status: 500,
@@ -31,19 +50,13 @@ export class UsersController {
         }
     }
 
-    getUser = async (id: string): Promise<UsersView> => {
+    getUser = async (companyId: number, id: number): Promise<UsersView> => {
         try {
-            const query = "SELECT * FROM Users";
+            const query = `SELECT * FROM Users WHERE id = "${id}" AND company_id = "${companyId}"`;
 
-            const user = (await Database.execute(query, { id: id }) as any[])[0];
+            const user = (await execute(query) as any[])[0];
 
-            return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                createdAt: user.created_at,
-                updatedAt: user.updated_at
-            } as UsersView;
+            return this.filterUserResponseObject([user])[0];
         } catch (e) {
             throw {
                 status: 500,
@@ -52,11 +65,23 @@ export class UsersController {
         }
     }
 
-    updateUser = async (user: UsersView) => {
+    updateUser = async (companyId: number, userId: number, user: any) => {
         try {
-            const query = `UPDATE Users SET name = "${user.name}", email = "${user.email}"`;
+            let query = `UPDATE Users SET `;
+            let i = 0;
+            for (let key in user) {
+                query += user[key] ? `${key} = "${escape(user[key])}"` : `${key} = ${user[key]}`;
 
-            return await Database.execute(query, { id: user.id });
+                if (i == (Object.keys(user).length - 1)) {
+                    query += " ";
+                    continue;
+                }
+                query += ", ";
+                i++;
+            }
+            query += `WHERE id = "${userId}" AND company_id = "${companyId}"`;
+
+            return await execute(query, { id: userId });
         } catch (e) {
             throw {
                 status: 500,
@@ -65,16 +90,24 @@ export class UsersController {
         }
     }
 
-    deleteUser = async (id: string) => {
+    deleteUser = async (companyId: number, id: number) => {
         try {
-            const query = `DELETE FROM Users WHERE id = "${id}"`;
+            const query = `DELETE FROM Users WHERE id = "${id}" AND company_id = "${companyId}"`;
 
-            return await Database.execute(query);
+            return await execute(query);
         } catch (e) {
             throw {
                 status: 500,
                 message: e.message
             } as RequestException;
         }
+    }
+
+    private filterUserResponseObject = (users: UsersView[]) => {
+        const filteredUsers = users.map(user => {
+            delete user.password;
+            return user;
+        });
+        return filteredUsers;
     }
 }

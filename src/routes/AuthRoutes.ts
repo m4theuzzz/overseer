@@ -28,7 +28,7 @@ route.post('/login', urlencoded({ extended: false }), (req: Request, res: Respon
                 }
             })
         } catch (error) {
-            res.status(error.status).send(error.message);
+            res.status(error.status || 500).send(error.message);
         }
     });
 });
@@ -43,7 +43,7 @@ route.post('/refresh', urlencoded({ extended: false }), async (req: Request, res
         const userData = Security.JWTDecrypt(req.headers['session-token'] as string);
         res.status(200).send(await controller.authorize(userData.email, Security.AESDecrypt(userData.password)));
     } catch (error) {
-        res.status(error.status).send(error.message);
+        res.status(error.status ?? 500).send(error.message);
     }
 })
 

@@ -1,55 +1,65 @@
-import { Database } from '../modules/Database';
-import { UsersView } from '../types/UsersView';
+import { execute } from '../modules/Database';
+import { processUser, UsersView } from '../types/UsersView';
 import { Security } from '../modules/Security';
 import { RequestException } from '../types/RequestExceptionView';
-
+import { AccessView } from '../types/AccessView';
 
 export class AuthController {
     authorize = async (email: string, password: string) => {
-        const query = "SELECT * FROM Users";
-        const params = {
-            email: email
-        };
+        const query = `SELECT * FROM Users WHERE email="${email}"`;
 
-        const users = (await Database.execute(query, params)) as UsersView[];
-        const user = users[0];
+        const user = (await execute(query) as any[])[0];
 
         if (!user) {
             throw { status: 404, message: "Email não cadastrado." } as RequestException;
         }
 
+        const userView = processUser(user);
+
         if (Security.AESDecrypt(user.password) == password) {
-            return { "session-token": Security.JWTEncrypt(user) };
+            return {
+                "user": {
+                    "id": userView.id,
+                    "name": userView.name,
+                    "email": userView.email,
+                    "permissionLevel": userView.level,
+                    "profilePicture": userView.profileImage
+                },
+                "session-token": Security.JWTEncrypt(userView)
+            };
         } else {
             throw { status: 400, message: "Senha incorreta." } as RequestException;
         }
     }
 
-    authenticate = async (sessionToken: string | string[]) => {
+    authenticate = async (sessionToken: string | string[]): Promise<AccessView> => {
         try {
             const userData = Security.JWTDecrypt(sessionToken as string);
 
             if (this.tokenIsValid(userData)) {
                 await this.authorize(userData.email, Security.AESDecrypt(userData.password));
-                return userData.id
+                return { userId: userData.userId, companyId: userData.companyId, permissionLevel: userData.level } as AccessView;
             }
         } catch (error) {
             throw error;
         }
     }
 
-    private tokenIsValid = (userData: any) => {
+    private tokenIsValid = (userData: any): boolean => {
         if (
             !userData.expireAt ||
             !userData.email ||
             !userData.password ||
-            !userData.id
+            !userData.userId ||
+            !userData.companyId ||
+            !userData.level
         ) {
             throw { status: 403, message: "Token inválido." } as RequestException;
         }
 
         const now = new Date();
-        if (now > userData.expireAt) {
+
+        if (now > new Date(userData.expireAt)) {
             throw { status: 403, message: "Token expirado." } as RequestException;
         }
 

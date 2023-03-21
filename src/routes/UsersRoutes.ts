@@ -1,85 +1,72 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { UsersController } from '../controllers/UsersController';
-import { AuthController } from '../controllers/AuthController';
-import { UsersView } from '../types/UsersView';
+import { verifyIntegrity, authMiddleware, hasEnoughtHierarchy } from '../modules/Utils';
 
 const route = Router();
 const controller = new UsersController();
-const auth = new AuthController();
 
-route.use(async (req: Request, res: Response, next: NextFunction) => {
-    if (req.headers["session-token"]) {
-        try {
-            const sessionToken = req.headers['session-token'];
-            const sessionId = await auth.authenticate(sessionToken);
-            req.sessionID = sessionId;
-            next();
-        } catch (error) {
-            console.log(error);
-            res.status(403).send("Token Inválido.");
-        }
+const verifyBodyIntegrity = (req: Request, res: Response, next: NextFunction) => {
+    if (verifyIntegrity('Users', req.body)) {
+        next();
     } else {
-        res.status(403).send("Token de autenticação não recebido.");
+        return res.status(400).send('Corpo da requisição inválido.');
     }
-});
+}
 
-// DEV ONLY: DELETE ON PRODUCTION
-route.get('/all', async (req: Request, res: Response) => {
+route.use(authMiddleware);
+
+route.get('/', async (req: Request, res: Response) => {
     try {
-        const users = await controller.getUsers();
+        const users = await controller.getUsers(Number(req.headers.authorization));
         res.status(200).send(users);
     } catch (error) {
-        res.status(error.status).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 
-route.get('/', async (req: any, res: Response) => {
+route.get('/:id', async (req: any, res: Response) => {
     try {
-        const user = await controller.getUser(req.sessionID);
+        const user = await controller.getUser(req.headers.authorization, req.params.id);
         res.status(200).send(user);
     } catch (error) {
-        res.status(error.status).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 
-route.post('/', async (req: Request, res: Response) => {
+route.post('/', verifyBodyIntegrity, async (req: Request, res: Response) => {
     try {
-        const response: any = await controller.createUser(req.body.name, req.body.password, req.body.email);
+        const response: any = await controller.createUser(Number(req.headers.authorization), req.body);
         if (response.affectedRows > 0) {
             res.status(200).send("Usuário cadastrado com sucesso.");
         } else {
             res.status(400).send("Não foi possível cadastrar o usuário.");
         }
     } catch (error) {
-        res.status(error.status).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 
-route.put('/', async (req: any, res: Response) => {
+route.put('/:id', verifyBodyIntegrity, async (req: any, res: Response) => {
     try {
-        if (!req.body.email || !req.body.name) {
-            return res.status(400).send("Sem dados suficientes.");
+        if (!(await hasEnoughtHierarchy(req.headers.authorization, req.sessionID, req.params.id))) {
+            return res.status(401).send("Você não possui permissão para alterar este usuário.");
         }
-        const userObject = {
-            id: req.sessionID,
-            name: req.body.name,
-            email: req.body.email
-        } as UsersView;
-
-        await controller.updateUser(userObject);
+        await controller.updateUser(req.headers.authorization, req.params.id, req.body);
         res.status(200).send("Usuário atualizado com sucesso.");
-
     } catch (error) {
-        res.status(error.status).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 
-route.delete('/', async (req: any, res: Response) => {
+route.delete('/:id', async (req: any, res: Response) => {
     try {
-        await controller.deleteUser(req.sessionID);
+        if (!(await hasEnoughtHierarchy(req.headers.authorization, req.sessionID, req.params.id))) {
+            return res.status(401).send("Você não possui permissão para alterar este usuário.");
+        }
+        await controller.deleteUser(req.headers.authorization, req.params.id);
         res.status(200).send("Usuário deletado com sucesso.");
     } catch (error) {
-        res.status(error.status).send(error.message);
+        res.status(500).send(error.message);
     }
 });
 

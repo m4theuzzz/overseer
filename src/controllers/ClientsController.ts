@@ -1,14 +1,40 @@
-import { ClientsView } from '../types/ClientsView';
-import { Database } from '../modules/Database';
+import { buildRawClient, ClientsRaw, ClientsView, processClient } from '../types/ClientsView';
+import { execute } from '../modules/Database';
 import { RequestException } from '../types/RequestExceptionView';
-import e = require('express');
+import { escape, verifyIntegrity } from '../modules/Utils';
+import { AddressController } from './AddressController';
+
+const addressController = new AddressController();
 
 export class ClientsController {
-    getClients = async (): Promise<ClientsView[]> => {
+    getClients = async (companyId: number): Promise<ClientsView[]> => {
         try {
-            const query = `SELECT * FROM Clients`;
+            const query = `
+                SELECT
+                    C.id as c_id,
+                    C.company_id as c_company_id,
+                    C.name as c_name,
+                    C.cpf_cnpj as c_cpf_cnpj,
+                    C.email as c_email,
+                    C.phone as c_phone,
+                    C.created_by as c_created_by,
+                    C.created_at as c_created_at,
+                    C.updated_at as c_updated_at,
+                    A.*
+                FROM Clients as C
+                INNER JOIN Addresses as A
+                ON A.id = C.address_id
+                WHERE C.company_id = "${companyId}"
+            `;
 
-            return (await Database.execute(query)) as ClientsView[];
+            const clients = (await execute(query)) as any[];
+            const rawClients: ClientsRaw[] = [];
+
+            for (const raw of clients) {
+                rawClients.push(buildRawClient(raw))
+            }
+
+            return rawClients.map(client => processClient(client));
         } catch (e) {
             throw {
                 status: 500,
@@ -17,14 +43,32 @@ export class ClientsController {
         }
     }
 
-    getClientById = async (id: string): Promise<ClientsView> => {
+    getClientById = async (id: number, companyId: number): Promise<ClientsView> => {
         try {
-            const query = `SELECT * FROM Clients WHERE id = "${id}"`;
+            const query = `
+                SELECT
+                    C.id as c_id,
+                    C.company_id as c_company_id,
+                    C.name as c_name,
+                    C.cpf_cnpj as c_cpf_cnpj,
+                    C.email as c_email,
+                    C.phone as c_phone,
+                    C.created_by as c_created_by,
+                    C.created_at as c_created_at,
+                    C.updated_at as c_updated_at,
+                    A.*
+                FROM Clients as C
+                INNER JOIN Addresses as A
+                ON A.id = C.address_id
+                WHERE C.id = "${id}"
+                AND C.company_id = "${companyId}"
+            `;
 
-            const client = ((await Database.execute(query)) as ClientsView[])[0];
+            const client = ((await execute(query)) as ClientsRaw[])[0];
 
             if (client) {
-                return client;
+                const rawClient = buildRawClient(client);
+                return processClient(rawClient);
             }
 
             throw {
@@ -39,12 +83,32 @@ export class ClientsController {
         }
     }
 
-    createClient = async (userId: string, info: ClientsView): Promise<boolean> => {
+    createClient = async (userId: number, companyId: number, info: ClientsView): Promise<boolean> => {
         try {
+            let addressId = null;
+            if (info.address) {
+                await addressController.createAddress(companyId, info.address);
+
+                const getAddressId = `SELECT LAST_INSERT_ID() FROM Addresses WHERE company_id = ${companyId}`
+                const addressIdRequest = (await execute(getAddressId)) as any[];
+
+                addressId = addressIdRequest[0]['LAST_INSERT_ID()'];
+            }
+
             const query = `
-            INSERT INTO Clients(user_id, name, cpf_cnpj, email, phone, address)
-            VALUES ("${userId}", "${info.name}", "${info.cpf_cnpj}", "${info.email}", "${info.phone}", "${info.address}")`;
-            const response: any = await Database.execute(query);
+                INSERT INTO Clients(company_id, name, cpf_cnpj, email, created_by, phone, address_id)
+                VALUES (
+                    "${companyId}",
+                    "${escape(info.name)}",
+                    "${escape(info.cpfCnpj)}",
+                    "${escape(info.email)}",
+                    "${userId}",
+                    ${info.phone ? '"' + escape(info.phone) + '"' : null},
+                    ${addressId}
+                )
+            `;
+
+            const response: any = await execute(query);
 
             if (response.affectedRows !== 0) {
                 return true;
@@ -62,12 +126,15 @@ export class ClientsController {
         }
     }
 
-    updateClient = async (id: string, info: any): Promise<boolean> => {
+    updateClient = async (id: number, info: any, companyId: number): Promise<boolean> => {
         try {
+            const addressInfo = info.address;
+            delete info.address;
+
             let query = `UPDATE Clients SET `;
             let i = 0;
             for (let key in info) {
-                query += `${key} = "${info[key]}"`;
+                query += info[key] ? `${key} = "${escape(info[key])}"` : `${key} = ${info[key]}`;
 
                 if (i == (Object.keys(info).length - 1)) {
                     query += " ";
@@ -76,11 +143,16 @@ export class ClientsController {
                 query += ", ";
                 i++;
             }
-            query += `WHERE id = "${id}"`;
+            query += `WHERE id = "${id}" AND company_id = "${companyId}"`;
 
-            const response: any = await Database.execute(query);
+            const response: any = await execute(query);
 
             if (response.affectedRows !== 0) {
+                if (addressInfo && verifyIntegrity('Address', addressInfo)) {
+                    const rawAddress = await addressController.getAddressByClientId(id, companyId);
+                    await addressController.updateAddress(rawAddress.id, addressInfo, companyId);
+                }
+
                 return true;
             } else {
                 throw {
@@ -96,20 +168,13 @@ export class ClientsController {
         }
     }
 
-    deleteClient = async (id: string): Promise<boolean> => {
+    deleteClient = async (id: number, companyId: number): Promise<boolean> => {
         try {
-            const query = `DELETE FROM Clients WHERE id = "${id}"`;
+            const query = `DELETE FROM Clients WHERE id = "${id}" AND company_id = "${companyId}"`;
 
-            const response: any = await Database.execute(query);
+            const response: any = await execute(query);
 
-            if (response.affectedRows !== 0) {
-                return true
-            } else {
-                throw {
-                    status: 500,
-                    message: "Não foi possível remover o cliente."
-                } as RequestException;
-            }
+            return true;
         } catch (e) {
             throw {
                 status: 500,

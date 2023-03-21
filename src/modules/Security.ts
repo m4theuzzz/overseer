@@ -55,9 +55,11 @@ export class Security {
 
         return sign(
             {
-                id: userData.id,
+                companyId: userData.companyId,
+                userId: userData.id,
                 email: userData.email,
                 password: userData.password,
+                level: userData.level,
                 expireAt: expireDate
             },
             process.env.KEY

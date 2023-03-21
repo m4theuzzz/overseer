@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento</title>
+</head>
+<style>
+    body {
+        margin-left: 3rem;
+    }
+
+    h1,
+    h2 {
+        color: black;
+        font-family: Roboto, sans-serif;
+    }
+
+    #title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #header h1 {
+        margin-right: 3rem;
+    }
+
+    #header img {
+        width: 100px;
+        height: 100px;
+        margin-left: 1rem;
+    }
+
+    #header p {
+
+        margin-right: 3rem;
+
+    }
+
+    #header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    #client-info,
+    #budget {
+
+        font-family: Roboto, sans-serif;
+
+    }
+
+    #client-info hr {
+        border: 1px solid #A9ABAC;
+    }
+
+    hr {
+        border: 1px solid #A9ABAC;
+        width: 90vw;
+        margin-right: 100px;
+    }
+
+    p {
+        font-weight: bold;
+    }
+
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 95%;
+    }
+
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+
+    div #box {
+        width: 90vw;
+        height: 100px;
+        border: 1px solid black;
+    }
+</style>
+
+<body>
+
+    <div id="header">
+        <img src="logo.png" alt="logo">
+
+        <p>Data: 13/11/2022</p>
+    </div>
+
+    <div id="client-info">
+        <h2 id="info">Informações do cliente</h2>
+        <hr>
+        <p id="client-name">Nome do cliente:</p>
+        <p id="company">Empresa:</p>
+        <p id="cpf">CPF/CNPJ</p>
+        <p id="phone">Telefone</p>
+        <p id="email">Email:</p>
+    </div>
+
+    <div id="budget">
+        <h2 id="budget-name">Nome do orçamento</h2>
+        <hr>
+        <h3 id="sector-name">Setor 1</h3>
+        <table>
+            <tr>
+                <th>Serviço</th>
+                <th>Quantidade</th>
+                <th>Unidade</th>
+                <th>Preço real</th>
+            </tr>
+            <tr>
+                <td>Serviço 1</td>
+                <td>4</td>
+                <td>m²</td>
+                <td>R$ 120.00</td>
+            </tr>
+            <tr>
+                <td>Serviço 2</td>
+                <td>4</td>
+                <td>m²</td>
+                <td>R$ 200.00</td>
+            </tr>
+            <tr>
+                <td>Serviço 3</td>
+                <td>7</td>
+                <td>m²</td>
+                <td>R$ 250.00</td>
+            </tr>
+        </table>
+        <p id="budget-price">Valor total: R$XX.XX</p>
+        <hr>
+
+    </div>
+    <div id="total-price">
+        <h3>Valor Total Orçado</h3>
+        <h3>R$ XX.XX</h3>
+    </div>
+
+    <div id="observations">
+        <h2>Observações:</h2>
+        <div id="box"></div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    ports:
+      - 80:3000
+      - 3000:80
+    volumes:
+      - './:/app:cached'
+      - '/app/node_modules'
+      - '/app/frontend/node_modules'
+    environment:
+      - API_PORT=80
+      - APP_PORT=3000
+      - DB_USER=root
+      - DB_PASS=toor
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=Overseer
+      - KEY=c@esxi4-jAhm#uq-qimte&z
+      - ENV=dev
+      - APP_EMAIL=contato@pioventi.com.br
+      - APP_EMAIL_PASS=Joth@2022-kwyd
+      - SMTP=smtp.titan.email
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=toor
+      - MYSQL_DATABASE=Overseer
+    volumes:
+      - ./database/scripts/create_schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/scripts/create_user.sql:/docker-entrypoint-initdb.d/user.sql
+      - ./database/scripts/seed_data.sql:/docker-entrypoint-initdb.d/seed.sql
