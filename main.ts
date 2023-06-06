@@ -20,8 +20,8 @@ const sess = {
     }
 }
 
-if (process.env.ENV === 'production') {
-    const allowedOrigins = ['http://localhost'];
+if (process.env.ENV === 'prod') {
+    const allowedOrigins = ['https://overseer-2oe4yrtbla-rj.a.run.app'];
     app.use(cors({
         origin: function (origin: any, callback: any) {
             // allow requests with no origin

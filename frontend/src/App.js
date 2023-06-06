@@ -17,7 +17,7 @@ if (window.user) {
   window.user.profilePicture = window.sessionStorage.getItem("profileImage");
 }
 window.apiToken = window.localStorage.getItem("api-token");
-window.apiHost = "http://localhost:3000";
+window.apiHost = process.env.ENV == 'prod' ? "https://overseer-2oe4yrtbla-rj.a.run.app:3000" : "http://localhost:3000";
 
 if (window.apiToken) {
   try {

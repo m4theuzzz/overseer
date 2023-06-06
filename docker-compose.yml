@@ -17,7 +17,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=Overseer
       - KEY=c@esxi4-jAhm#uq-qimte&z
-      - ENV=dev
+      - ENV=prod
       - APP_EMAIL=contato@pioventi.com.br
       - APP_EMAIL_PASS=Joth@2022-kwyd
       - SMTP=smtp.titan.email
