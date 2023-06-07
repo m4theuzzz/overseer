@@ -21,7 +21,7 @@ const sess = {
 }
 
 if (process.env.ENV === 'prod') {
-    const allowedOrigins = ['https://overseer-2oe4yrtbla-rj.a.run.app'];
+    const allowedOrigins = ['https://34.151.192.83'];
     app.use(cors({
         origin: function (origin: any, callback: any) {
             // allow requests with no origin

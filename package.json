@@ -5,7 +5,7 @@
   "main": "main.ts",
   "scripts": {
     "start": "(cd ./frontend && npm start) & (npm run build && node build/main.js)",
-    "start:dev": "(cd ./frontend && npm start) & nodemon main.ts",
+    "start:dev": "(cd ./frontend && npm start) & node main.ts",
     "build": "tsc",
     "test": "jest"
   },

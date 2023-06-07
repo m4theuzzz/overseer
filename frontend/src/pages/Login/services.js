@@ -8,7 +8,7 @@ export const userLogin = async (userData) => {
     body: JSON.stringify(userData),
   };
 
-  const baseUrl = process.env.ENV == 'prod' ? "https://overseer-2oe4yrtbla-rj.a.run.app:3000" : "http://localhost:3000";
+  const baseUrl = process.env.ENV == "https://34.151.192.83:3000";
 
   const res = await fetch(baseUrl + '/auth/login', settings);
 

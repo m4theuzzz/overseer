@@ -14,4 +14,4 @@ RUN (cd ./frontend && npm install && npm install --include=dev)
 
 EXPOSE 3000 80
 
-CMD ["npm", "run", "start:dev"]
+CMD ["npm", "run", "start"]
